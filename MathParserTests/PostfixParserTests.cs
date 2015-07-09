@@ -10,17 +10,6 @@ namespace MathParserTests
     [TestClass]
     public class PostfixParserTests
     {
-        public bool CompareListIExpressin(List<IExpression> expected, List<IExpression> actual)
-        {
-            if (expected.Count != actual.Count)
-                return false;
-
-            if (expected.Where((t, i) => t.Symbol != actual[i].Symbol).Any())
-                return false;
-
-            return true;
-        }
-
         [TestMethod]
         public void ParseTest()
         {
@@ -36,8 +25,22 @@ namespace MathParserTests
 
             var actual = (List<IExpression>)parser.Invoke("Parse");
 
-            Assert.IsTrue(CompareListIExpressin(expected,actual));
+            Assert.IsFalse(expected.Count != actual.Count);
+            Assert.IsFalse(expected.Where((t, i) => t.Symbol != actual[i].Symbol).Any());
+            
 
+
+            input = "2+throwexception(123)";
+            parser = new PrivateObject(new PostfixParser(input));
+            try
+            {
+                parser.Invoke("Parser"); // exception - "token "throwexception" is unknow"
+                Assert.Fail();
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         [TestMethod]
