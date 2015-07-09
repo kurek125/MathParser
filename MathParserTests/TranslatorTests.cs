@@ -56,7 +56,7 @@ namespace MathParserTests
 
         private string[] ExecuteMethod(string method, string[] expressions)
         {
-            PrivateObject translation = new PrivateObject(new Translator(""));
+            PrivateObject translation = new PrivateObject(new InfixToPostfixConverter(""));
             string[] actual = new string[expressions.Length];
             for(int i=0;i<expressions.Length;i++)
             {
@@ -67,7 +67,7 @@ namespace MathParserTests
 
         private object ExecuteMethod(string method, string expression)
         {
-            PrivateObject translation = new PrivateObject(new Translator(""));
+            PrivateObject translation = new PrivateObject(new InfixToPostfixConverter(""));
             return translation.Invoke(method, expression);
         }
 
@@ -77,12 +77,12 @@ namespace MathParserTests
             string input = "-2+-4*-5-sin-6";
             List<string> expected = (new string[] {"-2","4","0", "5", "-", "*", "0", "6", "-", "sin", "-", "-"}).ToList();
 
-            Translator translator = new Translator(input);
+            InfixToPostfixConverter infixToPostfixConverter = new InfixToPostfixConverter(input);
 
-            List<string> actual = translator.Translate();
+            List<string> actual = infixToPostfixConverter.Translate();
             CollectionAssert.AreEqual(expected,actual);
 
-            actual = translator.Translate();
+            actual = infixToPostfixConverter.Translate();
             CollectionAssert.AreEqual(expected, actual);
         }
     }

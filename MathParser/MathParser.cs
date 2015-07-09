@@ -19,8 +19,8 @@ namespace MathExpressions
         {
             List<IExpression> tokenList = new List<IExpression>();
 
-            Translator translator = new Translator(expression);
-            var tokens = translator.Translate();
+            InfixToPostfixConverter infixToPostfixConverter = new InfixToPostfixConverter(expression);
+            var tokens = infixToPostfixConverter.Translate();
 
             foreach (string token in tokens.Where(token => !string.IsNullOrEmpty(token)))
             {

@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 namespace MathExpressions
 {
     /// <summary>
-    /// Translate Infix Notation to Reverse Polish Notation (RPN)
+    /// InfixToPostfixConverter Infix Notation to Reverse Polish Notation (RPN)
     /// </summary>
-    public class Translator
+    public class InfixToPostfixConverter
     {
         private string _expressionToParse;
         private List<string> _translatedExpression;
 
         /// <summary>
-        /// Initialize new instance of Translator
+        /// Initialize new instance of InfixToPostfixConverter
         /// </summary>
         /// <param name="expression">Math expression (infix/standard notation)</param>
-        public Translator(string expression)
+        public InfixToPostfixConverter(string expression)
         {
             _expressionToParse = expression.Replace('.',',');
         }
