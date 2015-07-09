@@ -71,10 +71,7 @@ namespace MathParser
                 if (match.Groups[4].Value != "(")
                 {
                     //before the number
-                    string newValue = String.Format("{0}({1}{2})", 
-                        match.Groups[1].Value, 
-                        match.Groups[3].Value,
-                        match.Groups[4].Value);
+                    string newValue = $"{match.Groups[1].Value}({match.Groups[3].Value}{match.Groups[4].Value})";
                     expression = expression.Replace(match.Value, newValue);
                 }
                 else
@@ -131,13 +128,7 @@ namespace MathParser
             string splitPattern = @"(^(\+|-)[0-9]+(,[0-9]+)?(E(\+|-)?[0-9]+)?)|([a-z]+|\+|-|\*|\/|\(|\)|%|!|\^)|([0-9]+(,[0-9]+)?(E(\+|-)?[0-9]+)?)";
             Regex spliter = new Regex(splitPattern);
 
-            List<string> tokens = new List<string>();
-            foreach (Match token in spliter.Matches(expression))
-            {
-                tokens.Add(token.Value);
-            }
-
-            return tokens;
+            return (from Match token in spliter.Matches(expression) select token.Value).ToList();
         }
 
         private List<string> Parse(List<string> tokens)
