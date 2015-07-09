@@ -52,12 +52,12 @@
   <ItemGroup>
     <Compile Include="TranslatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PostfixParserTests.cs" />
+    <Compile Include="MathParserTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MathParser\MathParser.csproj">
+    <ProjectReference Include="..\MathParser\MathExpressions.csproj">
       <Project>{08ab61f9-37c6-49c6-a832-6d85c12b755a}</Project>
-      <Name>MathParser</Name>
+      <Name>MathExpressions</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

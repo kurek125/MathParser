@@ -6,16 +6,23 @@ using System.Text.RegularExpressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MathParser
+namespace MathExpressions
 {
+    /// <summary>
+    /// Translate Infix Notation to Reverse Polish Notation (RPN)
+    /// </summary>
     public class Translator
     {
         private string _expressionToParse;
         private List<string> _translatedExpression;
 
+        /// <summary>
+        /// Initialize new instance of Translator
+        /// </summary>
+        /// <param name="expression">Math expression (infix/standard notation)</param>
         public Translator(string expression)
         {
-            _expressionToParse = expression;
+            _expressionToParse = expression.Replace('.',',');
         }
 
         private string ReduceSigns(string expression)
@@ -181,6 +188,10 @@ namespace MathParser
             return returnItems;
         }
 
+        /// <summary>
+        /// Convert Infix/standard notation to Reverse Polish Notation(RPN)
+        /// </summary>
+        /// <returns>Divided expression in RPN</returns>
         public List<string> Translate()
         {
             if(_translatedExpression!=null)

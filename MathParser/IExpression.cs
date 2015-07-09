@@ -5,7 +5,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MathParser
+namespace MathExpressions
 {
     public static class Functions
     {

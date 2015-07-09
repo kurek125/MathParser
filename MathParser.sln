@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathParser", "MathParser\MathParser.csproj", "{08AB61F9-37C6-49C6-A832-6D85C12B755A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathExpressions", "MathParser\MathExpressions.csproj", "{08AB61F9-37C6-49C6-A832-6D85C12B755A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathParserTests", "MathParserTests\MathParserTests.csproj", "{CED928FB-907D-400F-AF44-9588928EA4C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathExpressionsTests", "MathParserTests\MathExpressionsTests.csproj", "{CED928FB-907D-400F-AF44-9588928EA4C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

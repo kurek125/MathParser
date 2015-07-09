@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MathParser
+namespace MathExpressions
 {
-    public class PostfixParser
+    public class MathParser
     {
         private string expression;
 
-        public PostfixParser(string expression)
+        public MathParser(string expression)
         {
             this.expression = expression;
         }
