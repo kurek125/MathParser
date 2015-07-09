@@ -1,0 +1,16 @@
+﻿Translation:
+0: input expression: 
+	"2*-3----sin-+(3-(3/2))""
+1: reduce signs: 
+	"2*-3+sin-(3-(3/2))"
+2: add missing parentheses: 
+	"2*(-3)+sin(-(3-(3/2)))"
+3: replace negative numbers to easier parse form:
+	"2*(0-3)+sin(0-(3/2)))"
+4: split:
+	'2' '*' '(' '0' '-' '3' ')' '+' 'sin' '(' '0' '-' '(' '3' '/' '2' ')' ')' ')';
+5: translate to RPN:
+	"2 0 3 - * 0 3 2 / - sin +"
+
+Calculate RPN expression;
+
