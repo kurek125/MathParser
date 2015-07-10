@@ -61,5 +61,18 @@ namespace MathParserTests
 
             Assert.AreEqual(expected, actual, 1e-6);
         }
+
+        [TestMethod]
+        public void RadiansTest()
+        {
+            MathParser parser = new MathParser("sin90");
+            double actual = parser.Calculate(useRadians: false);
+            double expected = 1.0;
+            Assert.AreEqual(expected,actual,1e-6);
+
+            actual = parser.Calculate();
+            expected = Math.Sin(90);
+            Assert.AreEqual(expected,actual,1e-6);
+        }
     }
 }

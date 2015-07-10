@@ -84,7 +84,7 @@ namespace MathExpressions
         public string Symbol => "(";
         public int Precedence => 0;
 
-        public void Parse(Stack<double> s)
+        public void Parse(Stack<double> s, bool useRadians)
         { }
 
         public IToken New()
@@ -97,7 +97,7 @@ namespace MathExpressions
         public string Symbol => ")";
         public int Precedence => 0;
 
-        public void Parse(Stack<double> s)
+        public void Parse(Stack<double> s, bool useRadians)
         { }
 
         public IToken New()
@@ -113,7 +113,8 @@ namespace MathExpressions
     {
         string Symbol { get; }
         int Precedence { get; }
-        void Parse(Stack<double> s);
+        void Parse(Stack<double> s, bool useRadians);
+
         IToken New();
     }
 
@@ -123,7 +124,7 @@ namespace MathExpressions
 
         public int Precedence => -1;
 
-        public void Parse(Stack<double> s)
+        public void Parse(Stack<double> s, bool useRadians)
         { }
 
         public IToken New()
@@ -138,7 +139,7 @@ namespace MathExpressions
 
         public int Precedence => -1;
 
-        public void Parse(Stack<double> s)
+        public void Parse(Stack<double> s, bool useRadians)
         { }
 
         public IToken New()
@@ -161,7 +162,7 @@ namespace MathExpressions
             _number = number;
         }
 
-        public void Parse(Stack<double> s)
+        public void Parse(Stack<double> s, bool useRadians)
         {
             s.Push(_number);
         }
@@ -179,7 +180,7 @@ namespace MathExpressions
 
         public int Precedence => 1;
 
-        public void Parse(Stack<double> s)
+        public void Parse(Stack<double> s, bool useRadians)
         {
             double secondNumber = s.Pop();
             double firstNumber = s.Pop();
@@ -199,7 +200,7 @@ namespace MathExpressions
 
         public int Precedence => 1;
 
-        public void Parse(Stack<double> s)
+        public void Parse(Stack<double> s, bool useRadians)
         {
             double secondNumber = s.Pop();
             double firstNumber = s.Pop();
@@ -220,7 +221,7 @@ namespace MathExpressions
 
         public int Precedence => 2;
 
-        public void Parse(Stack<double> s)
+        public void Parse(Stack<double> s, bool useRadians)
         {
             double secondNumber = s.Pop();
             double firstNumber = s.Pop();
@@ -240,7 +241,7 @@ namespace MathExpressions
 
         public int Precedence => 2;
 
-        public void Parse(Stack<double> s)
+        public void Parse(Stack<double> s, bool useRadians)
         {
             double secondNumber = s.Pop();
             double firstNumber = s.Pop();
@@ -261,7 +262,7 @@ namespace MathExpressions
 
         public int Precedence => 3;
 
-        public void Parse(Stack<double> s)
+        public void Parse(Stack<double> s, bool useRadians)
         {
             double secondNumber = s.Pop();
             double firstNumber = s.Pop();
@@ -282,11 +283,13 @@ namespace MathExpressions
 
         public int Precedence => int.MaxValue;
 
-        public void Parse(Stack<double> s)
+        public void Parse(Stack<double> s, bool useRadians)
         {
             double firstNumber = s.Pop();
 
-            s.Push(Math.Sin(firstNumber));
+            s.Push(Math.Sin(
+                useRadians ? firstNumber : firstNumber*Math.PI/180.0
+                ));
         }
 
         public IToken New()
@@ -301,11 +304,13 @@ namespace MathExpressions
 
         public int Precedence => int.MaxValue;
 
-        public void Parse(Stack<double> s)
+        public void Parse(Stack<double> s, bool useRadians)
         {
             double firstNumber = s.Pop();
 
-            s.Push(Math.Cos(firstNumber));
+            s.Push(Math.Cos(
+                useRadians ? firstNumber : firstNumber * Math.PI / 180.0
+                ));
         }
 
         public IToken New()
@@ -320,11 +325,13 @@ namespace MathExpressions
 
         public int Precedence => int.MaxValue;
 
-        public void Parse(Stack<double> s)
+        public void Parse(Stack<double> s, bool useRadians)
         {
             double firstNumber = s.Pop();
 
-            s.Push(Math.Tan(firstNumber));
+            s.Push(Math.Tan(
+                useRadians ? firstNumber : firstNumber * Math.PI / 180.0
+                ));
         }
 
         public IToken New()
@@ -339,11 +346,13 @@ namespace MathExpressions
 
         public int Precedence => int.MaxValue;
 
-        public void Parse(Stack<double> s)
+        public void Parse(Stack<double> s, bool useRadians)
         {
             double firstNumber = s.Pop();
 
-            s.Push(1.0/Math.Tan(firstNumber));
+            s.Push(1.0/Math.Tan(
+                useRadians ? firstNumber : firstNumber * Math.PI / 180.0
+                ));
         }
 
         public IToken New()
@@ -358,7 +367,7 @@ namespace MathExpressions
 
         public int Precedence => int.MaxValue;
 
-        public void Parse(Stack<double> s)
+        public void Parse(Stack<double> s, bool useRadians)
         {
             double firstnumber = s.Pop();
             double returnNumber = 1;

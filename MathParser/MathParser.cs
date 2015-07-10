@@ -34,15 +34,16 @@ namespace MathExpressions
             return tokenList;
         }
 
-        public double Calculate()
+        public double Calculate(bool useRadians=true)
         {
             List<IToken> tokens = Parse();
             Stack<double> operands = new Stack<double>();
             foreach (var op in tokens)
             {
-                op.Parse(operands);
+                op.Parse(operands,useRadians);
             }
             return operands.Pop();
         }
+
     }
 }
