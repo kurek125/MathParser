@@ -10,7 +10,7 @@ namespace MathExpressions
     public static class Functions
     {
         private static List<IExpression> functions;
-        private static List<IExpression> parentheses; 
+        private static List<IExpression> parentheses;
 
         private static void Generate()
         {
@@ -25,6 +25,9 @@ namespace MathExpressions
             functions.Add(new Div());
             functions.Add(new Pow());
             functions.Add(new Factorial());
+
+            functions.Add(new ConstPI());
+            functions.Add(new ConstE());
         }
         private static void GenerateParentheses()
         {
@@ -44,7 +47,7 @@ namespace MathExpressions
             {
                 if (token == e.Symbol)
                 {
-                    return e.Create();
+                    return e.New();
                 }
 
                 double number;
@@ -65,7 +68,7 @@ namespace MathExpressions
             foreach (IExpression p in parentheses)
             {
                 if (p.Symbol == token)
-                    return p.Create();
+                    return p.New();
             }
             return null;
         }
@@ -79,7 +82,41 @@ namespace MathExpressions
         string Symbol { get; }
         int Precedence { get; }
         void Parse(Stack<double> s);
-        IExpression Create();
+        IExpression New();
+    }
+
+    public class ConstPI : IExpression
+    {
+        public string Symbol => "PI";
+
+        public int Precedence => -1;
+
+        public void Parse(Stack<double> s)
+        {
+            s.Push(Math.PI);
+        }
+
+        public IExpression New()
+        {
+            return new Number(Math.PI);
+        }
+    }
+
+    public class ConstE : IExpression
+    {
+        public string Symbol => "e";
+
+        public int Precedence => -1;
+
+        public void Parse(Stack<double> s)
+        {
+            s.Push(Math.E);
+        }
+
+        public IExpression New()
+        {
+            return new Number(Math.E);
+        }
     }
 
     // precedence: -1
@@ -87,15 +124,9 @@ namespace MathExpressions
     {
         private double number;
 
-        public string Symbol
-        {
-            get { return number.ToString(); }
-        }
+        public string Symbol => number.ToString();
 
-        public int Precedence
-        {
-            get { return -1; }
-        }
+        public int Precedence => -1;
 
         public Number(double n)
         {
@@ -107,7 +138,7 @@ namespace MathExpressions
             s.Push(number);
         }
 
-        public IExpression Create()
+        public IExpression New()
         {
             return null;
         }
@@ -116,15 +147,9 @@ namespace MathExpressions
     // precedence: 1
     public class Add : IExpression
     {
-        public string Symbol
-        {
-            get { return "+"; }
-        }
+        public string Symbol => "+";
 
-        public int Precedence
-        {
-            get { return 1; }
-        }
+        public int Precedence => 1;
 
         public void Parse(Stack<double> s)
         {
@@ -134,7 +159,7 @@ namespace MathExpressions
             s.Push(firstNumber + secondNumber);
         }
 
-        public IExpression Create()
+        public IExpression New()
         {
             return new Add();
         }
@@ -142,15 +167,9 @@ namespace MathExpressions
 
     public class Sub : IExpression
     {
-        public string Symbol
-        {
-            get { return "-"; }
-        }
+        public string Symbol => "-";
 
-        public int Precedence
-        {
-            get { return 1; }
-        }
+        public int Precedence => 1;
 
         public void Parse(Stack<double> s)
         {
@@ -160,7 +179,7 @@ namespace MathExpressions
             s.Push(firstNumber - secondNumber);
         }
 
-        public IExpression Create()
+        public IExpression New()
         {
             return new Sub();
         }
@@ -169,15 +188,9 @@ namespace MathExpressions
     // precedence: 2
     public class Mul : IExpression
     {
-        public string Symbol
-        {
-            get { return "*"; }
-        }
+        public string Symbol => "*";
 
-        public int Precedence
-        {
-            get { return 2; }
-        }
+        public int Precedence => 2;
 
         public void Parse(Stack<double> s)
         {
@@ -187,7 +200,7 @@ namespace MathExpressions
             s.Push(firstNumber*secondNumber);
         }
 
-        public IExpression Create()
+        public IExpression New()
         {
             return new Mul();
         }
@@ -195,15 +208,9 @@ namespace MathExpressions
 
     public class Div : IExpression
     {
-        public string Symbol
-        {
-            get { return "/"; }
-        }
+        public string Symbol => "/";
 
-        public int Precedence
-        {
-            get { return 2; }
-        }
+        public int Precedence => 2;
 
         public void Parse(Stack<double> s)
         {
@@ -213,7 +220,7 @@ namespace MathExpressions
             s.Push(firstNumber/secondNumber);
         }
 
-        public IExpression Create()
+        public IExpression New()
         {
             return new Div();
         }
@@ -222,15 +229,9 @@ namespace MathExpressions
     // precedence: 3
     public class Pow : IExpression
     {
-        public string Symbol
-        {
-            get { return "^"; }
-        }
+        public string Symbol => "^";
 
-        public int Precedence
-        {
-            get { return 3; }
-        }
+        public int Precedence => 3;
 
         public void Parse(Stack<double> s)
         {
@@ -240,7 +241,7 @@ namespace MathExpressions
             s.Push(Math.Pow(firstNumber, secondNumber));
         }
 
-        public IExpression Create()
+        public IExpression New()
         {
             return new Pow();
         }
@@ -249,15 +250,9 @@ namespace MathExpressions
     // precedence: int.MaxValue   -- all 1 arguments functions
     public class Sin : IExpression
     {
-        public string Symbol
-        {
-            get { return "sin"; }
-        }
+        public string Symbol => "sin";
 
-        public int Precedence
-        {
-            get { return int.MaxValue; }
-        }
+        public int Precedence => int.MaxValue;
 
         public void Parse(Stack<double> s)
         {
@@ -266,7 +261,7 @@ namespace MathExpressions
             s.Push(Math.Sin(firstNumber));
         }
 
-        public IExpression Create()
+        public IExpression New()
         {
             return new Sin();
         }
@@ -274,15 +269,9 @@ namespace MathExpressions
 
     public class Cos : IExpression
     {
-        public string Symbol
-        {
-            get { return "cos"; }
-        }
+        public string Symbol => "cos";
 
-        public int Precedence
-        {
-            get { return int.MaxValue; }
-        }
+        public int Precedence => int.MaxValue;
 
         public void Parse(Stack<double> s)
         {
@@ -291,7 +280,7 @@ namespace MathExpressions
             s.Push(Math.Cos(firstNumber));
         }
 
-        public IExpression Create()
+        public IExpression New()
         {
             return new Cos();
         }
@@ -299,15 +288,9 @@ namespace MathExpressions
 
     public class Tan : IExpression
     {
-        public string Symbol
-        {
-            get { return "tan"; }
-        }
+        public string Symbol => "tan";
 
-        public int Precedence
-        {
-            get { return int.MaxValue; }
-        }
+        public int Precedence => int.MaxValue;
 
         public void Parse(Stack<double> s)
         {
@@ -316,7 +299,7 @@ namespace MathExpressions
             s.Push(Math.Tan(firstNumber));
         }
 
-        public IExpression Create()
+        public IExpression New()
         {
             return new Tan();
         }
@@ -324,15 +307,9 @@ namespace MathExpressions
 
     public class Cot : IExpression
     {
-        public string Symbol
-        {
-            get { return "cot"; }
-        }
+        public string Symbol => "cot";
 
-        public int Precedence
-        {
-            get { return int.MaxValue; }
-        }
+        public int Precedence => int.MaxValue;
 
         public void Parse(Stack<double> s)
         {
@@ -341,7 +318,7 @@ namespace MathExpressions
             s.Push(1.0/Math.Tan(firstNumber));
         }
 
-        public IExpression Create()
+        public IExpression New()
         {
             return new Cot();
         }
@@ -349,15 +326,9 @@ namespace MathExpressions
 
     public class Factorial : IExpression
     {
-        public string Symbol
-        {
-            get { return "!"; }
-        }
+        public string Symbol => "!";
 
-        public int Precedence
-        {
-            get { return int.MaxValue; }
-        }
+        public int Precedence => int.MaxValue;
 
         public void Parse(Stack<double> s)
         {
@@ -370,7 +341,7 @@ namespace MathExpressions
             s.Push(returnNumber);
         }
 
-        public IExpression Create()
+        public IExpression New()
         {
             return new Factorial();
         }
@@ -379,26 +350,27 @@ namespace MathExpressions
     // parentheses
     public class PHOpen : IExpression
     {
-        public string Symbol { get { return "("; } }
-        public int Precedence { get { return 0; } }
+        public string Symbol => "(";
+        public int Precedence => 0;
 
         public void Parse(Stack<double> s)
         {
         }
 
-        public IExpression Create()
+        public IExpression New()
         {
             return new PHOpen();
         }
     }
     public class PHClose : IExpression
     {
-        public string Symbol { get { return ")"; } }
-        public int Precedence { get { return 0; } }
+        public string Symbol => ")";
+        public int Precedence => 0;
+
         public void Parse(Stack<double> s)
         { }
 
-        public IExpression Create()
+        public IExpression New()
         {
             return new PHClose();
         }

@@ -52,7 +52,19 @@ namespace MathParserTests
             var parser = new MathParser(input);
             double actual = parser.Calculate();
 
-            Assert.AreEqual(expected,actual);
+            Assert.AreEqual(expected,actual,1e-6);
+        }
+
+        [TestMethod]
+        public void CalculateConstantsTest()
+        {
+            string input = "sin(90*PI/180)*e";
+            double expected = Math.Sin(90*Math.PI/180.0)*Math.E;
+
+            var parser = new MathParser(input);
+            double actual = parser.Calculate();
+
+            Assert.AreEqual(expected, actual, 1e-6);
         }
     }
 }

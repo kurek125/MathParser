@@ -132,7 +132,7 @@ namespace MathExpressions
             expression = ReduceSigns(expression);
             expression = AddMissingParentheses(expression);
             expression = TranslateNegativeNumbers(expression);
-            string splitPattern = @"(^(\+|-)[0-9]+(,[0-9]+)?(E(\+|-)?[0-9]+)?)|([a-z]+|\+|-|\*|\/|\(|\)|%|!|\^)|([0-9]+(,[0-9]+)?(E(\+|-)?[0-9]+)?)";
+            string splitPattern = @"(^(\+|-)[0-9]+(,[0-9]+)?(E(\+|-)?[0-9]+)?)|([a-zA-Z]+|\+|-|\*|\/|\(|\)|%|!|\^)|([0-9]+(,[0-9]+)?(E(\+|-)?[0-9]+)?)";
             Regex spliter = new Regex(splitPattern);
 
             return (from Match token in spliter.Matches(expression) select token.Value).ToList();
