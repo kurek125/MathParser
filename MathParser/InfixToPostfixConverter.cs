@@ -5,6 +5,8 @@ using System.Runtime.ConstrainedExecution;
 using System.Text.RegularExpressions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
+using MathExpressions;
 
 namespace MathExpressions
 {
@@ -142,9 +144,9 @@ namespace MathExpressions
         {
             Stack<IToken> operands = new Stack<IToken>();
             List<string> returnItems = new List<string>();
+                
 
-
-            foreach (string tokenName in tokensNames)
+            foreach (var tokenName in tokensNames)
             {
                 IToken token = Tokens.GetToken(tokenName);
                 IToken parenthesis = Tokens.GetParenthesis(tokenName);
@@ -181,6 +183,10 @@ namespace MathExpressions
                             t = operands.Pop();
                         }
                     }
+                }
+                else
+                {
+                    throw new UnknowTokenException(tokenName);
                 }
             }
             returnItems.AddRange(operands.Select(e => e.Symbol));

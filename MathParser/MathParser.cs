@@ -24,21 +24,10 @@ namespace MathExpressions
 
             foreach (string token in tokens.Where(token => !string.IsNullOrEmpty(token)))
             {
-                try
+                IToken e = Tokens.GetToken(token);
+                if (e != null)
                 {
-                    IToken e = Tokens.GetToken(token);
-                    if (e != null)
-                    {
-                        tokenList.Add(e);
-                    }
-                    else
-                    {
-                        throw new Exception($"token: \"{token}\" is unknown");
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new Exception(e.Message);
+                    tokenList.Add(e);
                 }
             }
 

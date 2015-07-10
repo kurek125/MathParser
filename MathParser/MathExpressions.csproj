@@ -44,6 +44,7 @@
     <Compile Include="MathParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InfixToPostfixConverter.cs" />
+    <Compile Include="UnknowTokenException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="expression parsing process.txt" />

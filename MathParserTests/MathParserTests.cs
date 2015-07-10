@@ -27,20 +27,15 @@ namespace MathParserTests
 
             Assert.IsFalse(expected.Count != actual.Count);
             Assert.IsFalse(expected.Where((t, i) => t.Symbol != actual[i].Symbol).Any());
-            
+        }
 
-
-            input = "2+throwexception(123)";
-            parser = new PrivateObject(new MathParser(input));
-            try
-            {
-                parser.Invoke("Parser"); // exception - "token "throwexception" is unknow"
-                Assert.Fail();
-            }
-            catch (Exception e)
-            {
-
-            }
+        [TestMethod]
+        [ExpectedException(typeof (UnknowTokenException))]
+        public void ParseExceptionTest()
+        {
+            string input = "2+throwexception(123)";
+            PrivateObject parser = new PrivateObject(new MathParser(input));
+            parser.Invoke("Parse"); // exception - "token "throwexception" is unknow"
         }
 
         [TestMethod]
