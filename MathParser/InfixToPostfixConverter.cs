@@ -138,47 +138,47 @@ namespace MathExpressions
             return (from Match token in spliter.Matches(expression) select token.Value).ToList();
         }
 
-        private List<string> Parse(List<string> tokens)
+        private List<string> Parse(List<string> tokensNames)
         {
-            Stack<IExpression> operands = new Stack<IExpression>();
+            Stack<IToken> operands = new Stack<IToken>();
             List<string> returnItems = new List<string>();
 
 
-            foreach (string item in tokens)
+            foreach (string tokenName in tokensNames)
             {
-                IExpression func = Functions.GetFunction(item);
-                IExpression parentheses = Functions.GetParentheses(item);
-                if (func != null)
+                IToken token = Tokens.GetToken(tokenName);
+                IToken parenthesis = Tokens.GetParenthesis(tokenName);
+                if (token != null)
                 {
-                    if (func.Precedence == -1)
+                    if (token.Precedence == -1)
                     {
-                        returnItems.Add(func.Symbol);
+                        returnItems.Add(token.Symbol);
                     }
-                    else if (operands.Count == 0 || func.Precedence > operands.Peek().Precedence)
+                    else if (operands.Count == 0 || token.Precedence > operands.Peek().Precedence)
                     {
-                        operands.Push(func);
+                        operands.Push(token);
                     }
                     else
                     {
-                        IExpression e = operands.Pop();
-                        operands.Push(func);
+                        IToken e = operands.Pop();
+                        operands.Push(token);
                         returnItems.Add(e.Symbol);
                     }
                 }
-                else if (parentheses != null)
+                else if (parenthesis != null)
                 {
-                    if (parentheses.Symbol == "(")
+                    if (parenthesis.Symbol == "(")
                     {
-                        operands.Push(parentheses);
+                        operands.Push(parenthesis);
                     }
                     else
                     {
-                        IExpression e = operands.Pop();
-                        while (e.Symbol != "(")
+                        IToken t = operands.Pop();
+                        while (t.Symbol != "(")
                         {
-                            returnItems.Add(e.Symbol);
+                            returnItems.Add(t.Symbol);
 
-                            e = operands.Pop();
+                            t = operands.Pop();
                         }
                     }
                 }

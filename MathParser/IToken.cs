@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace MathExpressions
 {
-    public static class Functions
+    public static class Tokens
     {
-        private static List<IExpression> _functions;
-        private static List<IExpression> _parentheses;
+        private static List<IToken> _tokensList;
+        private static List<IToken> _parentheses;
 
         private static void Generate()
         {
-            _functions = new List<IExpression>
+            _tokensList = new List<IToken>
             {
                 new Sin(),
                 new Cos(),
@@ -33,29 +33,29 @@ namespace MathExpressions
         }
         private static void GenerateParentheses()
         {
-            _parentheses = new List<IExpression>
+            _parentheses = new List<IToken>
             {
                 new PHOpen(),
                 new PHClose()
             };
         }
 
-        public static IExpression GetFunction(string token)
+        public static IToken GetToken(string tokenSymbol)
         {
-            if (_functions == null)
+            if (_tokensList == null)
             {
                 Generate();
             }
 
-            foreach (IExpression e in _functions)
+            foreach (IToken token in _tokensList)
             {
-                if (token == e.Symbol)
+                if (tokenSymbol == token.Symbol)
                 {
-                    return e.New();
+                    return token.New();
                 }
 
                 double number;
-                if (double.TryParse(token, out number))
+                if (double.TryParse(tokenSymbol, out number))
                 {
                     return new Number(number);
                 }
@@ -63,93 +63,117 @@ namespace MathExpressions
             return null;
         }
 
-        public static IExpression GetParentheses(string token)
+        public static IToken GetParenthesis(string parenthesisSymbol)
         {
             if (_parentheses == null)
             {
                 GenerateParentheses();
             }
-            foreach (IExpression p in _parentheses)
+            foreach (IToken p in _parentheses)
             {
-                if (p.Symbol == token)
+                if (p.Symbol == parenthesisSymbol)
                     return p.New();
             }
             return null;
         }
     }
 
+    // parentheses
+    public class PHOpen : IToken
+    {
+        public string Symbol => "(";
+        public int Precedence => 0;
+
+        public void Parse(Stack<double> s)
+        { }
+
+        public IToken New()
+        {
+            return new PHOpen();
+        }
+    }
+    public class PHClose : IToken
+    {
+        public string Symbol => ")";
+        public int Precedence => 0;
+
+        public void Parse(Stack<double> s)
+        { }
+
+        public IToken New()
+        {
+            return new PHClose();
+        }
+    }
+
     /// <summary>
-    ///  precedence "-1" mean: no precedence like number or sin, cos...
+    ///  precedence "-1" mean: no precedence like number or constants
     /// </summary>
-    public interface IExpression
+    public interface IToken
     {
         string Symbol { get; }
         int Precedence { get; }
         void Parse(Stack<double> s);
-        IExpression New();
+        IToken New();
     }
 
-    public class ConstPI : IExpression
+    public class ConstPI : IToken
     {
         public string Symbol => "PI";
 
         public int Precedence => -1;
 
         public void Parse(Stack<double> s)
-        {
-            s.Push(Math.PI);
-        }
+        { }
 
-        public IExpression New()
+        public IToken New()
         {
             return new Number(Math.PI);
         }
     }
 
-    public class ConstE : IExpression
+    public class ConstE : IToken
     {
         public string Symbol => "e";
 
         public int Precedence => -1;
 
         public void Parse(Stack<double> s)
-        {
-            s.Push(Math.E);
-        }
+        { }
 
-        public IExpression New()
+        public IToken New()
         {
             return new Number(Math.E);
         }
     }
 
     // precedence: -1
-    public class Number : IExpression
+    public class Number : IToken
     {
-        private double number;
+        private double _number;
 
-        public string Symbol => number.ToString();
+        public string Symbol => _number.ToString();
 
         public int Precedence => -1;
 
-        public Number(double n)
+        public Number(double number)
         {
-            this.number = n;
+            _number = number;
         }
 
         public void Parse(Stack<double> s)
         {
-            s.Push(number);
+            s.Push(_number);
         }
 
-        public IExpression New()
+        public IToken New()
         {
             return null;
         }
     }
 
     // precedence: 1
-    public class Add : IExpression
+    public class Add : IToken
     {
         public string Symbol => "+";
 
@@ -163,13 +187,13 @@ namespace MathExpressions
             s.Push(firstNumber + secondNumber);
         }
 
-        public IExpression New()
+        public IToken New()
         {
             return new Add();
         }
     }
 
-    public class Sub : IExpression
+    public class Sub : IToken
     {
         public string Symbol => "-";
 
@@ -183,14 +207,14 @@ namespace MathExpressions
             s.Push(firstNumber - secondNumber);
         }
 
-        public IExpression New()
+        public IToken New()
         {
             return new Sub();
         }
     }
 
     // precedence: 2
-    public class Mul : IExpression
+    public class Mul : IToken
     {
         public string Symbol => "*";
 
@@ -204,13 +228,13 @@ namespace MathExpressions
             s.Push(firstNumber*secondNumber);
         }
 
-        public IExpression New()
+        public IToken New()
         {
             return new Mul();
         }
     }
 
-    public class Div : IExpression
+    public class Div : IToken
     {
         public string Symbol => "/";
 
@@ -224,14 +248,14 @@ namespace MathExpressions
             s.Push(firstNumber/secondNumber);
         }
 
-        public IExpression New()
+        public IToken New()
         {
             return new Div();
         }
     }
 
     // precedence: 3
-    public class Pow : IExpression
+    public class Pow : IToken
     {
         public string Symbol => "^";
 
@@ -245,14 +269,14 @@ namespace MathExpressions
             s.Push(Math.Pow(firstNumber, secondNumber));
         }
 
-        public IExpression New()
+        public IToken New()
         {
             return new Pow();
         }
     }
 
     // precedence: int.MaxValue   -- all 1 arguments functions
-    public class Sin : IExpression
+    public class Sin : IToken
     {
         public string Symbol => "sin";
 
@@ -265,13 +289,13 @@ namespace MathExpressions
             s.Push(Math.Sin(firstNumber));
         }
 
-        public IExpression New()
+        public IToken New()
         {
             return new Sin();
         }
     }
 
-    public class Cos : IExpression
+    public class Cos : IToken
     {
         public string Symbol => "cos";
 
@@ -284,13 +308,13 @@ namespace MathExpressions
             s.Push(Math.Cos(firstNumber));
         }
 
-        public IExpression New()
+        public IToken New()
         {
             return new Cos();
         }
     }
 
-    public class Tan : IExpression
+    public class Tan : IToken
     {
         public string Symbol => "tan";
 
@@ -303,13 +327,13 @@ namespace MathExpressions
             s.Push(Math.Tan(firstNumber));
         }
 
-        public IExpression New()
+        public IToken New()
         {
             return new Tan();
         }
     }
 
-    public class Cot : IExpression
+    public class Cot : IToken
     {
         public string Symbol => "cot";
 
@@ -322,13 +346,13 @@ namespace MathExpressions
             s.Push(1.0/Math.Tan(firstNumber));
         }
 
-        public IExpression New()
+        public IToken New()
         {
             return new Cot();
         }
     }
 
-    public class Factorial : IExpression
+    public class Factorial : IToken
     {
         public string Symbol => "!";
 
@@ -345,38 +369,9 @@ namespace MathExpressions
             s.Push(returnNumber);
         }
 
-        public IExpression New()
+        public IToken New()
         {
             return new Factorial();
-        }
-    }
-
-    // parentheses
-    public class PHOpen : IExpression
-    {
-        public string Symbol => "(";
-        public int Precedence => 0;
-
-        public void Parse(Stack<double> s)
-        {
-        }
-
-        public IExpression New()
-        {
-            return new PHOpen();
-        }
-    }
-    public class PHClose : IExpression
-    {
-        public string Symbol => ")";
-        public int Precedence => 0;
-
-        public void Parse(Stack<double> s)
-        { }
-
-        public IExpression New()
-        {
-            return new PHClose();
         }
     }
 }

@@ -15,9 +15,9 @@ namespace MathExpressions
             this.expression = expression;
         }
 
-        private List<IExpression> Parse()
+        private List<IToken> Parse()
         {
-            List<IExpression> tokenList = new List<IExpression>();
+            List<IToken> tokenList = new List<IToken>();
 
             InfixToPostfixConverter infixToPostfixConverter = new InfixToPostfixConverter(expression);
             var tokens = infixToPostfixConverter.Translate();
@@ -26,7 +26,7 @@ namespace MathExpressions
             {
                 try
                 {
-                    IExpression e = Functions.GetFunction(token);
+                    IToken e = Tokens.GetToken(token);
                     if (e != null)
                     {
                         tokenList.Add(e);
@@ -47,7 +47,7 @@ namespace MathExpressions
 
         public double Calculate()
         {
-            List<IExpression> tokens = Parse();
+            List<IToken> tokens = Parse();
             Stack<double> operands = new Stack<double>();
             foreach (var op in tokens)
             {
