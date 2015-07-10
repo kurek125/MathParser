@@ -9,41 +9,45 @@ namespace MathExpressions
 {
     public static class Functions
     {
-        private static List<IExpression> functions;
-        private static List<IExpression> parentheses;
+        private static List<IExpression> _functions;
+        private static List<IExpression> _parentheses;
 
         private static void Generate()
         {
-            functions = new List<IExpression>();
-            functions.Add(new Sin());
-            functions.Add(new Cos());
-            functions.Add(new Tan());
-            functions.Add(new Cot());
-            functions.Add(new Add());
-            functions.Add(new Sub());
-            functions.Add(new Mul());
-            functions.Add(new Div());
-            functions.Add(new Pow());
-            functions.Add(new Factorial());
+            _functions = new List<IExpression>
+            {
+                new Sin(),
+                new Cos(),
+                new Tan(),
+                new Cot(),
+                new Add(),
+                new Sub(),
+                new Mul(),
+                new Div(),
+                new Pow(),
+                new Factorial(),
+                new ConstPI(),
+                new ConstE()
+            };
 
-            functions.Add(new ConstPI());
-            functions.Add(new ConstE());
         }
         private static void GenerateParentheses()
         {
-            parentheses = new List<IExpression>();
-            parentheses.Add(new PHOpen());
-            parentheses.Add(new PHClose());
+            _parentheses = new List<IExpression>
+            {
+                new PHOpen(),
+                new PHClose()
+            };
         }
 
         public static IExpression GetFunction(string token)
         {
-            if (functions == null)
+            if (_functions == null)
             {
                 Generate();
             }
 
-            foreach (IExpression e in functions)
+            foreach (IExpression e in _functions)
             {
                 if (token == e.Symbol)
                 {
@@ -61,11 +65,11 @@ namespace MathExpressions
 
         public static IExpression GetParentheses(string token)
         {
-            if (parentheses == null)
+            if (_parentheses == null)
             {
                 GenerateParentheses();
             }
-            foreach (IExpression p in parentheses)
+            foreach (IExpression p in _parentheses)
             {
                 if (p.Symbol == token)
                     return p.New();
