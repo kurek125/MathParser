@@ -27,6 +27,8 @@ namespace MathExpressions
             _expressionToParse = expression.Replace('.',',');
         }
 
+        #region Prepare expression
+
         private string ReduceSigns(string expression)
         {
             string reducedExpression = expression;
@@ -68,9 +70,9 @@ namespace MathExpressions
         private string AddMissingParentheses(string expression)
         {
             string pattern = @"([a-z]+|(\*|\/))(\+|-)([0-9]+(,[0-9]+)?(E(\+|-)?[0-9]+)?|\()";
-                            // 4.CG - number or opening parenthesis
-                            // 3.CG - sign - or +
-                            // 1.CG - function before missing parenthesis
+            // 4.CG - number or opening parenthesis
+            // 3.CG - sign - or +
+            // 1.CG - function before missing parenthesis
 
             Regex seeker = new Regex(pattern);
             Match match = seeker.Match(expression);
@@ -104,7 +106,8 @@ namespace MathExpressions
 
                         if (openParenthesis == 0)
                         {
-                            int afterPaenthesesIndex = i + 1; // 'i' parentheses index, needed is expression after parentheses
+                            int afterPaenthesesIndex = i + 1;
+                                // 'i' parentheses index, needed is expression after parentheses
                             var expressionAfterParentheses = expression.Substring(afterPaenthesesIndex);
 
                             int inParenthesesIndex = match.Groups[3].Index; // 3.CG is sign 
@@ -129,6 +132,8 @@ namespace MathExpressions
             return seeker.Replace(expression, "(0-");
         }
 
+        #endregion
+
         private List<string> Split(string expression)
         {
             expression = ReduceSigns(expression);
@@ -140,58 +145,84 @@ namespace MathExpressions
             return (from Match token in spliter.Matches(expression) select token.Value).ToList();
         }
 
+        #region Parsing
+
         private List<Token> Parse(List<string> tokensNames)
         {
             Tokens tokens = new Tokens();
             Stack<Token> operands = new Stack<Token>();
-            List<Token> rpnExpression = new List<Token>();
+            List<Token> rpnOutput = new List<Token>();
 
             foreach (var tokenName in tokensNames)
             {
-                double number;
-                bool isNumber = double.TryParse(tokenName, out number);
                 var token = tokens.GetFunction(tokenName);
 
-                if (isNumber)
-                {
-                    rpnExpression.Add(new Token() {Symbol = tokenName, Precedence = -1}); // important -1 mean Number );
-                }
-                else if (token != null && token.action!=null) // in functions action != null
-                {
-                    if (operands.Count == 0 || token.Precedence > operands.Peek().Precedence)
-                    {
-                        operands.Push(token);
-                    }else
-                    {
-                        Token e = operands.Pop();
-                        operands.Push(token);
-                        rpnExpression.Add(e);
-                    }
-                }else if (token != null && token.action == null) // in parentheses action == null
-                {
-                    if (token.Symbol == "(")
-                    {
-                        operands.Push(token);
-                    }
-                    else
-                    {
-                        Token t = operands.Pop();
-                        while (t.Symbol != "(")
-                        {
-                            rpnExpression.Add(t);
-                            t = operands.Pop();
-                        }
-                    }
-                }else
-                {
-                    throw new UnknowTokenException(tokenName);
-                }
+                if (ParseNumber(rpnOutput, tokenName))
+                    continue;
+                if (ParseFunctions(operands, rpnOutput, token))
+                    continue;
+                if (ParseParentheses(operands, rpnOutput, token)) // in parentheses action == null
+                    continue;
+
+                throw new UnknowTokenException(tokenName);
             }
 
-            rpnExpression.AddRange(operands);
+            rpnOutput.AddRange(operands);
 
-            return rpnExpression;
-        } 
+            return rpnOutput;
+        }
+
+        private bool ParseNumber(List<Token> rpnOutput, string tokenName)
+        {
+            double number;
+            bool isNumber = double.TryParse(tokenName, out number);
+            if (!isNumber) return false;
+
+            rpnOutput.Add(new Token() {Symbol = tokenName, Precedence = -1}); // important -1 mean Number );
+            return true;
+        }
+
+        private bool ParseFunctions(Stack<Token> operands, List<Token> rpnOutput, Token token)
+        {
+            if (token?.action == null) //token == null || token.action == null
+                return false;
+
+            if (operands.Count == 0 || token.Precedence > operands.Peek().Precedence)
+            {
+                operands.Push(token);
+            }else
+            {
+                Token e = operands.Pop();
+                operands.Push(token);
+                rpnOutput.Add(e);
+            }
+
+            return true;
+        }
+
+        private bool ParseParentheses(Stack<Token> operands, List<Token> rpnOutput, Token token)
+        {
+            if (token == null || token.action != null)
+                return false;
+
+            if (token.Symbol == "(")
+            {
+                operands.Push(token);
+            }
+            else
+            {
+                Token t = operands.Pop();
+                while (t.Symbol != "(")
+                {
+                    rpnOutput.Add(t);
+                    t = operands.Pop();
+                }
+            }
+            return true;
+        }
+
+        #endregion
+
 
         /// <summary>
         /// Convert Infix/standard notation to Reverse Polish Notation(RPN)

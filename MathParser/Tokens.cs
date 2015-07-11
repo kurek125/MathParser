@@ -8,15 +8,15 @@ namespace MathExpressions
 {
     public class Token
     {
-        public Action<Stack<double>> action;
+        public Action<Stack<double>,bool> action;
         public int Precedence;
         public string Symbol;
 
-        public void Parse(Stack<double> operands)
+        public void Parse(Stack<double> operands, bool useRadians=true)
         {
             if (action != null)
             {
-                action(operands);
+                action(operands,useRadians);
             }
             else if (Precedence == -1)
             {
@@ -76,63 +76,67 @@ namespace MathExpressions
             return tokens.Find(n=>n.Symbol==symbol);
         }
 
-        private void ConstPi(Stack<double> operands)
+        //constants
+        private void ConstPi(Stack<double> operands, bool useRadians)
         {
             operands.Push(Math.PI);
         }
-        private void ConstE(Stack<double> operands)
+        private void ConstE(Stack<double> operands, bool useRadians)
         {
             operands.Push(Math.E);
         }
-        private void Add(Stack<double> operands)
+
+        //basics
+        private void Add(Stack<double> operands, bool useRadians)
         {
             var secondArg = operands.Pop();
             var firstArg = operands.Pop();
             operands.Push(firstArg + secondArg);
         }
-        private void Sub(Stack<double> operands)
+        private void Sub(Stack<double> operands, bool useRadians)
         {
             var secondArg = operands.Pop();
             var firstArg = operands.Pop();
             operands.Push(firstArg - secondArg);
         }
-        private void Mul(Stack<double> operands)
+        private void Mul(Stack<double> operands, bool useRadians)
         {
             var secondArg = operands.Pop();
             var firstArg = operands.Pop();
             operands.Push(firstArg * secondArg);
         }
-        private void Div(Stack<double> operands)
+        private void Div(Stack<double> operands, bool useRadians)
         {
             var secondArg = operands.Pop();
             var firstArg = operands.Pop();
             operands.Push(firstArg / secondArg);
         }
-        private void Pow(Stack<double> operands)
+        private void Pow(Stack<double> operands, bool useRadians)
         {
             var secondArg = operands.Pop();
             var firstArg = operands.Pop();
             operands.Push(Math.Pow(firstArg, secondArg));
         }
 
-        private void Sin(Stack<double> operands)
+        //trigonometric
+        private void Sin(Stack<double> operands, bool useRadians)
         {
-            var arg = operands.Pop();
+            var arg = useRadians ? operands.Pop() : (operands.Pop()*Math.PI/180.0);
             operands.Push(Math.Sin(arg));
         }
-        private void Cos(Stack<double> operands)
+        private void Cos(Stack<double> operands, bool useRadians)
         {
-            var arg = operands.Pop();
+            var arg = useRadians ? operands.Pop() : (operands.Pop() * Math.PI / 180.0);
             operands.Push(Math.Cos(arg));
         }
-        private void Tan(Stack<double> operands)
+        private void Tan(Stack<double> operands, bool useRadians)
         {
-            var arg = operands.Pop();
+            var arg = useRadians ? operands.Pop() : (operands.Pop() * Math.PI / 180.0);
             operands.Push(Math.Tan(arg));
         }
-        private void Cot(Stack<double> operands)
+        private void Cot(Stack<double> operands, bool useRadians)
         {
-            var arg = operands.Pop();
+            var arg = useRadians ? operands.Pop() : (operands.Pop() * Math.PI / 180.0);
             operands.Push(1.0 / Math.Tan(arg));
         }
     }

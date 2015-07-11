@@ -23,13 +23,13 @@ namespace MathExpressions
             return tokens;
         }
 
-        public double Calculate(bool useRadians = true)
+        public double Calculate(bool useRadians=true)
         {
             List<Token> tokens = Parse();
             Stack<double> operands = new Stack<double>();
             foreach (var op in tokens)
             {
-                op.Parse(operands);
+                op.Parse(operands,useRadians);
             }
             return operands.Pop();
         }
