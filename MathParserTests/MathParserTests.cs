@@ -17,16 +17,15 @@ namespace MathParserTests
 
             PrivateObject parser = new PrivateObject(new MathParser(input));
 
-            List<IToken> expected = (new IToken[]
+            List<string> expected = (new[]
             {
-                new Number(double.Parse("1,23E-4")), new Number(5), new Mul(), new Number(3), new Number(2),
-                new Number(1), new Sub(), new Div(), new Sin(), new Number(0),new Number(1), new Sub(), new Mul(), new Add()
+               "1,23E-4", "5", "*", "3", "2", "1", "-", "/", "sin", "0", "1", "-", "*", "+"
             }).ToList();
 
-            var actual = (List<IToken>)parser.Invoke("Parse");
+            var actual = (List<Token>)parser.Invoke("Parse");
 
             Assert.IsFalse(expected.Count != actual.Count);
-            Assert.IsFalse(expected.Where((t, i) => t.Symbol != actual[i].Symbol).Any());
+            Assert.IsFalse(expected.Where((t, i) => t != actual[i].Symbol).Any());
         }
 
         [TestMethod]

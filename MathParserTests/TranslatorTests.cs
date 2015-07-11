@@ -79,10 +79,10 @@ namespace MathParserTests
 
             InfixToPostfixConverter infixToPostfixConverter = new InfixToPostfixConverter(input);
 
-            List<string> actual = infixToPostfixConverter.Translate();
+            List<string> actual = infixToPostfixConverter.Translate().Select(n=>n.Symbol).ToList();
             CollectionAssert.AreEqual(expected,actual);
 
-            actual = infixToPostfixConverter.Translate();
+            actual = infixToPostfixConverter.Translate().Select(n=>n.Symbol).ToList();
             CollectionAssert.AreEqual(expected, actual);
         }
     }

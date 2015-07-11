@@ -16,7 +16,7 @@ namespace MathExpressions
     public class InfixToPostfixConverter
     {
         private string _expressionToParse;
-        private List<string> _translatedExpression;
+        private List<Token> _translatedExpression;
 
         /// <summary>
         /// Initialize new instance of InfixToPostfixConverter
@@ -140,65 +140,64 @@ namespace MathExpressions
             return (from Match token in spliter.Matches(expression) select token.Value).ToList();
         }
 
-        private List<string> Parse(List<string> tokensNames)
+        private List<Token> Parse(List<string> tokensNames)
         {
-            Stack<IToken> operands = new Stack<IToken>();
-            List<string> returnItems = new List<string>();
-                
+            Tokens tokens = new Tokens();
+            Stack<Token> operands = new Stack<Token>();
+            List<Token> rpnExpression = new List<Token>();
 
             foreach (var tokenName in tokensNames)
             {
-                IToken token = Tokens.GetToken(tokenName);
-                IToken parenthesis = Tokens.GetParenthesis(tokenName);
-                if (token != null)
+                double number;
+                bool isNumber = double.TryParse(tokenName, out number);
+                var token = tokens.GetFunction(tokenName);
+
+                if (isNumber)
                 {
-                    if (token.Precedence == -1)
-                    {
-                        returnItems.Add(token.Symbol);
-                    }
-                    else if (operands.Count == 0 || token.Precedence > operands.Peek().Precedence)
-                    {
-                        operands.Push(token);
-                    }
-                    else
-                    {
-                        IToken e = operands.Pop();
-                        operands.Push(token);
-                        returnItems.Add(e.Symbol);
-                    }
+                    rpnExpression.Add(new Token() {Symbol = tokenName, Precedence = -1}); // important -1 mean Number );
                 }
-                else if (parenthesis != null)
+                else if (token != null && token.action!=null) // in functions action != null
                 {
-                    if (parenthesis.Symbol == "(")
+                    if (operands.Count == 0 || token.Precedence > operands.Peek().Precedence)
                     {
-                        operands.Push(parenthesis);
+                        operands.Push(token);
+                    }else
+                    {
+                        Token e = operands.Pop();
+                        operands.Push(token);
+                        rpnExpression.Add(e);
+                    }
+                }else if (token != null && token.action == null) // in parentheses action == null
+                {
+                    if (token.Symbol == "(")
+                    {
+                        operands.Push(token);
                     }
                     else
                     {
-                        IToken t = operands.Pop();
+                        Token t = operands.Pop();
                         while (t.Symbol != "(")
                         {
-                            returnItems.Add(t.Symbol);
-
+                            rpnExpression.Add(t);
                             t = operands.Pop();
                         }
                     }
-                }
-                else
+                }else
                 {
                     throw new UnknowTokenException(tokenName);
                 }
             }
-            returnItems.AddRange(operands.Select(e => e.Symbol));
 
-            return returnItems;
-        }
+            rpnExpression.AddRange(operands);
+
+            return rpnExpression;
+        } 
 
         /// <summary>
         /// Convert Infix/standard notation to Reverse Polish Notation(RPN)
         /// </summary>
         /// <returns>Divided expression in RPN</returns>
-        public List<string> Translate()
+        public List<Token> Translate()
         {
             if(_translatedExpression!=null)
                 return _translatedExpression;

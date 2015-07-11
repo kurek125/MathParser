@@ -15,35 +15,23 @@ namespace MathExpressions
             this.expression = expression;
         }
 
-        private List<IToken> Parse()
+        private List<Token> Parse()
         {
-            List<IToken> tokenList = new List<IToken>();
-
             InfixToPostfixConverter infixToPostfixConverter = new InfixToPostfixConverter(expression);
             var tokens = infixToPostfixConverter.Translate();
 
-            foreach (string token in tokens.Where(token => !string.IsNullOrEmpty(token)))
-            {
-                IToken e = Tokens.GetToken(token);
-                if (e != null)
-                {
-                    tokenList.Add(e);
-                }
-            }
-
-            return tokenList;
+            return tokens;
         }
 
-        public double Calculate(bool useRadians=true)
+        public double Calculate(bool useRadians = true)
         {
-            List<IToken> tokens = Parse();
+            List<Token> tokens = Parse();
             Stack<double> operands = new Stack<double>();
             foreach (var op in tokens)
             {
-                op.Parse(operands,useRadians);
+                op.Parse(operands);
             }
             return operands.Pop();
         }
-
     }
 }

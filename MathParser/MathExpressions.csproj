@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IToken.cs" />
+    <Compile Include="Tokens.cs" />
     <Compile Include="MathParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InfixToPostfixConverter.cs" />
